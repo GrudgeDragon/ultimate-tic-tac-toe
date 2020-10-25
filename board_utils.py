@@ -23,6 +23,11 @@ For the meta game, you don't have to wait for the meta to fill up, once there's 
 diagonal, the game can be declared a tie because it's un-winnable.
 
 """
+# For local boards
+num_to_char = {1: 'X', -1: 'O', 0: ' '}
+
+# For meta boards
+num_to_char_meta = {1: 'X', -1: 'O', 0: '*', None: ' '}
 
 def get_local_board(global_board, board_index):
     row_start = board_index[0] * 3
@@ -96,10 +101,13 @@ def get_winner_board(board, unfinished_key):
         return board[2, 0]
 
     # No wins, check for draw caused by full board
-    return check_board_full(board, unfinished_key)  # All tiles are filled, return draw
+    if is_board_full(board, unfinished_key):
+        return 0
+    else:
+        return None
 
 
-def check_board_full(board, unfinished_key):
+def is_board_full(board, unfinished_key):
     """
     After failing to detect a win condition, use this function to check for full boards. This function assumes there are
     no win conditions in the board, and does not check for them. This won't catch all cats' games, just games that
@@ -113,9 +121,9 @@ def check_board_full(board, unfinished_key):
     for r in range(3):
         for c in range(3):
             if board[r, c] == unfinished_key:  # Moves are left, not a draw
-                return None
+                return False
 
-    return 0  # All tiles are filled, return draw
+    return True  # All tiles are filled, return draw
 
 def is_board_winnable(board):
     """
@@ -190,10 +198,14 @@ def is_board_winnable(board):
     return False
 
 def print_global_board(global_board):
-    letter_board = [['X' if move == 1 else 'O' if move == -1 else ' ' for move in row] for row in global_board]
+    letter_board = [[num_to_char[player] for player in row] for row in global_board]
+    print("  0 1 2  3 4 5  6 7 8")
     for row in range(9):
         if (row % 3 == 0 and row != 0):
-            print("-"*20)
+            print("  " + "-"*20)
+
+        print(str(row) + " ", end="")
+
         for col3 in range(3):
             for col in range(3):
                 print(letter_board[row][col3*3+col] + " ", end="")
@@ -201,7 +213,7 @@ def print_global_board(global_board):
         print()
 
 def print_board(board):
-    letter_board = [['X' if move == 1 else 'O' if move == -1 else ' ' if move is None else '*' for move in row] for row in board]
+    letter_board = [[num_to_char_meta[move] for move in row] for row in board]
     for row in range(3):
         if row != 0:
             print("-"*9)
@@ -209,3 +221,6 @@ def print_board(board):
             print(letter_board[row][col], end="")
             print(" | " if col != 2 else "", end="")
         print()
+
+
+
