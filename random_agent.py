@@ -1,12 +1,12 @@
 import random as rand
 from board_utils import *
+from game import UT3Agent
 
-class RandomAgent:
+class RandomAgent(UT3Agent):
 
-    #
-    #   player: 1 or -1
-    def __init__(self, player):
-        self.player = player
+    #   player_num: 1 or -1
+    def __init__(self, player_name):
+        super().__init__(player_name)
 
     # The agent makes a move
     #   board: is 9x9 board state

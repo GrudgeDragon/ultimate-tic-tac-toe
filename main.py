@@ -2,6 +2,13 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import random_agent
+import game
+
+player1 = random_agent.RandomAgent("Bob")
+player2 = random_agent.RandomAgent("Alison")
+game = game.UT3Game()
+game.play(player1, player2)
+exit()
 
 def to_text(mat):
     thing = []

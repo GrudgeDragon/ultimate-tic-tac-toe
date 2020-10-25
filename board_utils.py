@@ -29,6 +29,14 @@ def get_local_board(global_board, board_index):
     col_start = board_index[1] * 3
     return global_board[row_start:row_start + 3, col_start:col_start + 3]
 
+def get_meta_board(global_board):
+    meta_board = np.array([[None for j in range(3)] for i in range(3)])
+
+    for local_board_row in range(3):
+        for local_board_col in range(3):
+            local_board = get_local_board(global_board, (local_board_row, local_board_col))
+            meta_board[local_board_row, local_board_col] = get_winner_local_board(local_board)
+    return meta_board
 
 def get_global_winner(global_board):
     """
@@ -39,12 +47,7 @@ def get_global_winner(global_board):
               0 if board is full, or more likely, the global_board is un-winnable,
               None if game isn't finished.
     """
-    meta_board = np.array([[None for j in range(3)] for i in range(3)])
-
-    for local_board_row in range(3):
-        for local_board_col in range(3):
-            local_board = get_local_board(global_board, (local_board_row, local_board_col))
-            meta_board[local_board_row, local_board_col] = get_winner_local_board(local_board)
+    meta_board = get_meta_board(global_board)
 
     result = get_winner_meta_board(meta_board)
 
@@ -185,3 +188,24 @@ def is_board_winnable(board):
 
     # Could not find a row with both players in it, is still winnable.
     return False
+
+def print_global_board(global_board):
+    letter_board = [['X' if move == 1 else 'O' if move == -1 else ' ' for move in row] for row in global_board]
+    for row in range(9):
+        if (row % 3 == 0 and row != 0):
+            print("-"*20)
+        for col3 in range(3):
+            for col in range(3):
+                print(letter_board[row][col3*3+col] + " ", end="")
+            print("|" if col3 != 2 else "", end="")
+        print()
+
+def print_board(board):
+    letter_board = [['X' if move == 1 else 'O' if move == -1 else ' ' if move is None else '*' for move in row] for row in board]
+    for row in range(3):
+        if row != 0:
+            print("-"*9)
+        for col in range(3):
+            print(letter_board[row][col], end="")
+            print(" | " if col != 2 else "", end="")
+        print()
