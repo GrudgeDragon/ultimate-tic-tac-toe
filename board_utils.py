@@ -1,5 +1,20 @@
 import numpy as np
 
+
+"""
+A Note about cat's games
+
+Cat's games in UT3 are not the same as cat's games in T3. This is because players can place their mark on meta and local
+boards consecutively, without their opponent's interference.
+
+For local boards, the game isn't finished until all the spaces
+are filled. So the game isn't declared a draw until the local board is full. This is an arbitrary rules choice, but it's
+the one we chose. This can be made to be configurable if we like.
+
+For the meta game, you don't have to wait for the meta to fill up, once there's an X and O in every row, column, and
+diagonal, the game can be declared a tie because it's un-winnable.
+"""
+
 # returns 1 or -1 if a player won. Returns 0 if draw, return None if game isn't finished.
 def get_winner_meta(board):
     meta_board = np.array([[None for j in range(3)] for i in range(3)])
@@ -12,7 +27,13 @@ def get_winner_meta(board):
             result = get_winner_subboard(sub_board, 0)
             meta_board[sub_board_row, sub_board_col] = get_winner_subboard(sub_board, 0)
 
-    return get_winner_subboard(meta_board, None)
+    result = get_winner_subboard(meta_board, None)
+
+    # If no one's won the meta yet, check for cat's game
+    if result is None and not is_board_winnable(meta_board):
+        return 0
+
+    return result
 
 
 # Finds winner on a 3x3 board
@@ -24,35 +45,40 @@ def get_winner_subboard(board3, unfinished_key):
     Searches for rows, columns, and diagonals of 1 and -1s
 
     :param board3: a 3x3 array
-    :param unfinished_key: On a t3 board, 0 indicates an unfinished game. On a ut3, a None indicates an unfinished game.
-    :return: The winner if one is found (1 or -1). Returns 0 for draw, and None for an unfinished game.
+    :param unfinished_key: On a T3 board, 0 indicates an unfinished game. On a UT3, a None indicates an unfinished game.
+    :return: The winner if one is found (1 or -1). Returns 0 for full board, and None for an unfinished game.
     """
     for i in range(3):
         # check for win in row i
-        if board3[i, 0] is not None and board3[i, 0] != 0 and board3[i, 0] == board3[i, 1] and board3[i, 0] == board3[i, 2]:
+        if board3[i, 0] is not None and board3[i, 0] != 0 and \
+                        board3[i, 0] == board3[i, 1] and board3[i, 0] == board3[i, 2]:
             return board3[i, 0]
 
         # check for win in col i
-        if board3[i, 0] is not None and board3[0, i] != 0 and board3[0, i] == board3[1, i] and board3[0, i] == board3[2, i]:
+        if board3[i, 0] is not None and board3[0, i] != 0 \
+                and board3[0, i] == board3[1, i] and board3[0, i] == board3[2, i]:
             return board3[0, i]
 
-    if board3[i, 0] is not None and board3[0, 0] != 0 and board3[0, 0] == board3[1, 1] and board3[0, 0] == board3[2, 2]:
+    if board3[i, 0] is not None and board3[0, 0] != 0 and \
+                    board3[0, 0] == board3[1, 1] and board3[0, 0] == board3[2, 2]:
         return board3[0, 0]
 
-    if board3[i, 0] is not None and board3[2, 0] != 0 and board3[2, 0] == board3[1, 1] and board3[2, 0] == board3[0, 2]:
+    if board3[i, 0] is not None and board3[2, 0] != 0 and \
+                    board3[2, 0] == board3[1, 1] and board3[2, 0] == board3[0, 2]:
         return board3[2, 0]
 
-    # No wins, check for draw
-    return check_draw(board3, unfinished_key)  # All tiles are filled, return draw
+    # No wins, check for draw caused by full board
+    return check_board_full(board3, unfinished_key)  # All tiles are filled, return draw
 
 
-def check_draw(board3, unfinished_key):
+def check_board_full(board3, unfinished_key):
     """
-    After failing to detect a win condition, use this function to check for draws. This function assumes there are no
-    win conditions in the board, and does not check for them.
+    After failing to detect a win condition, use this function to check for full boards. This function assumes there are
+    no win conditions in the board, and does not check for them. This won't catch all cats' games, just games that
+    cannot continue because the board is full.
 
     :param board3: a 3x3 board that has no wind conditions in it
-    :param unfinished_key: On a t3 board, 0 indicates an unfinished game. On a ut3, a None indicates an unfinished game.
+    :param unfinished_key: On a T3 board, 0 indicates an unfinished game. On a UT3, a None indicates an unfinished game.
     :return: 0 for draw, and None for an unfinished game.
     """
 
@@ -62,3 +88,75 @@ def check_draw(board3, unfinished_key):
                 return None
 
     return 0  # All tiles are filled, return draw
+
+def is_board_winnable(board):
+    """
+    After checking for win conditions, you can check if a board is a cats game. This function doesn't check for win
+    conditions first. It will greedily look for the first row without both players in it, so a board with a win in it
+    will always be considered a winnable game by this algorithm. If you don't like it, add a new function without the
+    greedy suffix.
+
+    Note: This algorithm doesn't make sense for normal T3. This is because one player can make several moves in a row in
+    a local or global board without being blocked by the other player.
+
+    Example of a board that would be a cat's game in normal T3, but isn't a cat's game in UT3
+    X|O|X
+     |X|
+    O|X|O
+
+    :param board: 3x3 array that doesn't contain a win condition
+    :return: true if the game cannot be won by either player.
+    """
+
+    # Check rows
+    for row in range(3):
+        player1_in_row = False
+        player2_in_row = False
+        for col in range(3):
+            if board[row, col] == 1:
+                player1_in_row = True
+            elif board[row, col] == -1:
+                player2_in_row = True
+
+        # Still winnable if we didn't see both players.
+        if not (player1_in_row and player2_in_row):
+            return True
+
+    # Check columns
+    for col in range(3):
+        player1_in_col = False
+        player2_in_col = False
+        for row in range(3):
+            if board[row, col] == 1:
+                player1_in_col = True
+            elif board[row, col] == -1:
+                player2_in_col = True
+
+        # Still winnable if we didn't see both players.
+        if not (player1_in_col and player2_in_col):
+            return True
+
+    # Check main diagonal
+    player1_in_diagonal = False
+    player2_in_diagonal = False
+    for i in range(3):
+        if board[i, i] == 1:
+            player1_in_diagonal = True
+        elif board[i, i] == -1:
+            player2_in_diagonal = True
+    if not (player1_in_diagonal and player2_in_diagonal):
+        return True
+
+    # Check second diagonal
+    player1_in_diagonal = False
+    player2_in_diagonal = False
+    for i in range(3):
+        if board[i, 2-i] == 1:
+            player1_in_diagonal = True
+        elif board[i, 2-i] == -1:
+            player2_in_diagonal = True
+    if not (player1_in_diagonal and player2_in_diagonal):
+        return True
+
+    # Could not find a row with both players in it, is still winnable.
+    return False

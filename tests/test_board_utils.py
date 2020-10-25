@@ -2,9 +2,18 @@ import unittest
 import numpy as np
 import board_utils
 
+unwinnable_boards = [np.array([[1, -1, -1],
+                               [-1,  1,  1],
+                               [ 0,  1, -1]])]
+
+winnable_boards = [np.array([[1, -1, 0],
+                             [-1,  1,  1],
+                             [ 0,  1, -1]]),
+                   np.array([[ 1, -1,  1],
+                            [ 1,  0,  1],
+                            [ 0, -1, -1]])]
 
 class TestBoardUtils(unittest.TestCase):
-
     def test_win_condition(self):
         # Test win in the top row.
         board = np.zeros((9, 9))
@@ -102,6 +111,12 @@ class TestBoardUtils(unittest.TestCase):
                           [-1, 1, -1]])
         self.assertEqual(board_utils.get_winner_subboard(board, None), None, "Game should be unfinished")
 
+    def test_winnable_games(self):
+        for board in unwinnable_boards:
+            self.assertFalse(board_utils.is_board_winnable(board), "This should be an unwinnable game")
+
+        for board in winnable_boards:
+            self.assertTrue(board_utils.is_board_winnable(board), "This should be a winnable game")
 
 if __name__ == '__main__':
     unittest.main()
