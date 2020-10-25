@@ -1,7 +1,7 @@
 import numpy as np
 
 # returns 1 or -1 if a player won. Returns 0 if draw, return None if game isn't finished.
-def winner9(board):
+def get_winner_meta(board):
     meta_board = np.array([[None for j in range(3)] for i in range(3)])
 
     for sub_board_row in range(3):
@@ -9,17 +9,17 @@ def winner9(board):
         for sub_board_col in range(3):
             col_start = sub_board_col * 3
             sub_board = board[row_start:row_start+3, col_start:col_start+3]
-            result = winner3(sub_board, 0)
-            meta_board[sub_board_row, sub_board_col] = winner3(sub_board, 0)
+            result = get_winner_subboard(sub_board, 0)
+            meta_board[sub_board_row, sub_board_col] = get_winner_subboard(sub_board, 0)
 
-    return winner3(meta_board, None)
+    return get_winner_subboard(meta_board, None)
 
 
 # Finds winner on a 3x3 board
 # returns 0 for draw, None for incomplete game
 # Note: Algorithm is greedy. If both players have 3 in a row, this function will not take that into account, it will
 # report the first win condition it finds.
-def winner3(board3, unfinished_key):
+def get_winner_subboard(board3, unfinished_key):
     """
     Searches for rows, columns, and diagonals of 1 and -1s
 
