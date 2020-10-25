@@ -20,12 +20,12 @@ class TestBoardUtils(unittest.TestCase):
 
     def test_win_condition_no_winner(self):
 
-        # Empty board is unfinished
+        # Empty board is unfinished.
         board = np.zeros((9, 9))
         result = board_utils.get_winner_meta(board)
         self.assertEqual(result, None, "The board9 is all 0s, the game should be unfinished")
 
-    def test_subboard_win_t3(self):
+    def test_win_subboard_t3(self):
         """
         return values
         1 or -1 result is a win by that player
@@ -83,7 +83,8 @@ class TestBoardUtils(unittest.TestCase):
         For these tests we pass None as the unfinished_key because a None on the board indicates an unfinished game of
         meta tic-tac-toe
         """
-        # Test unfinished meta draw is a unfinished, (or draw?).
+        # TODO: Test unfinished meta draw is a unfinished, (or draw?).
+        print("\nMissing test for behavior around meta-cats game")
 
         # Test a ut3 board of 0s is a draw.
         board = np.zeros((3, 3))
