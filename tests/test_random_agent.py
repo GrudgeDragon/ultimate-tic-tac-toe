@@ -45,11 +45,16 @@ class TestRandomAgent(unittest.TestCase):
             self.assertIn(col, range(6, 9), "Col must be in valid range")
 
     def test_can_make_move_on_dense_board(self):
+        # Make a board with only a few valid moves left
         board = np.ones((9, 9))
-        board[5, 5] = 0
-        for i in range(10):
+        for i in range(3):
+            board[3 + i, 4] = 0
+            board[4, 3 + i] = 0
+
+        for i in range(100):
             move = self.agent.make_move(board, None)
-            self.assertTrue(move == (5, 5), "Move must be the only valid one left on board")
+            self.assertIn(move[0], range(3, 6), "Move must be the only valid one left on board")
+            self.assertIn(move[1], range(3, 6), "Move must be the only valid one left on board")
 
     def test_dont_write_to_completed_subboards(self):
         print("\nSkipping test_dont_write_to_completed_subboards")

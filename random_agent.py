@@ -1,5 +1,5 @@
 import random as rand
-import board_utils
+from board_utils import *
 
 class RandomAgent:
 
@@ -25,18 +25,20 @@ class RandomAgent:
             return self.random_local_board_move(global_board, row_start, col_start)
 
         # if local_board isn't set, choose one at random
-        local_board_list = [i for i in range(9)]
-        rand.shuffle(local_board_list)
+        local_board_index_list = [(i // 3, i % 3) for i in range(9)]
+        rand.shuffle(local_board_index_list)
 
         # Try each local_board until a valid move is found
         for i in range(9):
-            local_board = local_board_list[i]
-            row_start = (local_board // 3) * 3
-            col_start = (local_board % 3) * 3
-            # TODO: If this board has a win condition, skip
-            move = self.random_local_board_move(global_board, row_start, col_start)
-            if move is not None:
-                return move
+            local_board_index = local_board_index_list[i]
+            row_start = local_board_index[0] * 3
+            col_start = local_board_index[1] * 3
+
+            # If this board has a win condition, don't try to make a move
+            if not is_player(get_winner_local_board(get_local_board(global_board, local_board_index))):
+                move = self.random_local_board_move(global_board, row_start, col_start)
+                if move is not None:
+                    return move
         else:
             print("Random agent couldn't find a valid move")
 

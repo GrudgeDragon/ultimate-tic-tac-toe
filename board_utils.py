@@ -83,7 +83,7 @@ def get_winner_board(board, unfinished_key):
             return board[i, 0]
 
         # check for win in col i
-        if is_player(board[i, 0]) and board[0, i] == board[1, i] and board[0, i] == board[2, i]:
+        if is_player(board[0, i]) and board[0, i] == board[1, i] and board[0, i] == board[2, i]:
             return board[0, i]
 
     if is_player(board[0, 0]) and board[0, 0] == board[1, 1] and board[0, 0] == board[2, 2]:
