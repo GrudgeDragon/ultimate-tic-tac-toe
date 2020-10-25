@@ -1,4 +1,5 @@
 import random as rand
+import board_utils
 
 class RandomAgent:
 
@@ -9,35 +10,37 @@ class RandomAgent:
 
     # The agent makes a move
     #   board: is 9x9 board state
-    #   sub_board: if not null, a tuple representing the sub_board that must be used ([0-2],[0-2])
-    def make_move(self, board, subboard_index):
+    #   local_board: if not null, a tuple representing the sub_board that must be used ([0-2],[0-2])
+    def make_move(self, global_board, local_board_index):
 
-        # if subboard is given
-        if subboard_index is not None:
+        # if local_board is given
+        if local_board_index is not None:
             # Validate it
-            if subboard_index[0] < 0 or subboard_index[0] > 2 or subboard_index[1] < 0 or subboard_index[1] > 2:
-                print("Bad subboard_index")
+            if local_board_index[0] < 0 or local_board_index[0] > 2 or local_board_index[1] < 0 or local_board_index[1] > 2:
+                print("Bad local_board_index")
                 return None
-            row_start = subboard_index[0] * 3
-            col_start = subboard_index[1] * 3
-            return self.random_subboard_move(board, row_start, col_start)
+            row_start = local_board_index[0] * 3
+            col_start = local_board_index[1] * 3
+            # TODO: If the forced board is completed, skip. This probably shouldn't happen though
+            return self.random_local_board_move(global_board, row_start, col_start)
 
-        # if subboard isn't set, choose one at random
-        subboard_list = [i for i in range(9)]
-        rand.shuffle(subboard_list)
+        # if local_board isn't set, choose one at random
+        local_board_list = [i for i in range(9)]
+        rand.shuffle(local_board_list)
 
-        # Try each subboard until a valid move is found
+        # Try each local_board until a valid move is found
         for i in range(9):
-            subboard = subboard_list[i]
-            row_start = (subboard // 3) * 3
-            col_start = (subboard % 3) * 3
-            move = self.random_subboard_move(board, row_start, col_start)
+            local_board = local_board_list[i]
+            row_start = (local_board // 3) * 3
+            col_start = (local_board % 3) * 3
+            # TODO: If this board has a win condition, skip
+            move = self.random_local_board_move(global_board, row_start, col_start)
             if move is not None:
                 return move
         else:
             print("Random agent couldn't find a valid move")
 
-    def random_subboard_move(self, board, row_start, col_start):
+    def random_local_board_move(self, board, row_start, col_start):
         # Get a random list of moves
         move_list = [i for i in range(9)]
         rand.shuffle(move_list)

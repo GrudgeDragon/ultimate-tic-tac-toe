@@ -53,7 +53,7 @@ class TestRandomAgent(unittest.TestCase):
 
     def test_dont_write_to_completed_subboards(self):
         print("\nSkipping test_dont_write_to_completed_subboards")
-        return
+        #return
         board = np.zeros((9, 9))
         for i in range(9):
             board[0, i] = 1  # Complete top 3 subboards
@@ -67,8 +67,8 @@ class TestRandomAgent(unittest.TestCase):
         for i in range(20):
             (row, col) = self.agent.make_move(board, None)
             # TODO: IMPLEMENT
-            #self.assertIn(row, range(6, 9), "Row must be in valid range")
-            #self.assertIn(col, range(3, 6), "Row must be in valid range")
+            self.assertIn(row, range(6, 9), "Must choose a row in the only available local board")
+            self.assertIn(col, range(3, 6), "Must choose a column in the only available local board")
 
 
 

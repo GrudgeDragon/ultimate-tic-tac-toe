@@ -1,4 +1,9 @@
 
+
+"""
+The game should never give a bad board constraint
+"""
+
 class Ut3Game:
 
     def __init__(self, agent1, agent2):
