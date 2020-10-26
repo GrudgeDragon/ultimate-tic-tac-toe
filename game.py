@@ -64,6 +64,7 @@ class UT3Game:
         return True
 
     def play(self, agent1, agent2):
+        self.__init__()
         self.agent1 = agent1
         self.agent2 = agent2
         agent1.player_num = 1

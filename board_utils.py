@@ -213,7 +213,7 @@ def print_global_board(global_board):
         print()
 
 def print_board(board):
-    letter_board = [[num_to_char_meta[move] for move in row] for row in board]
+    letter_board = [[num_to_char_meta[num] for num in row] for row in board]
     for row in range(3):
         if row != 0:
             print("-"*9)
