@@ -7,17 +7,19 @@ import game
 player1 = random_agent.RandomAgent("Bob")
 player2 = random_agent.RandomAgent("Alison")
 game = game.UT3Game()
-game.print_moves = False
+# game.print_moves = True
+game.log_boards = True
+game.log_prefix = "random_agents"
 
 results = []
-for i in range(10000):
+for i in range(10):
     results.append(game.play(player1, player2))
 
 wins = {-1: 0., 1: 0., 0: 0.}
 for r in results:
     wins[r] += 1
 
-print(results)
+# print(results)
 print("First player wins {} for {}%".format(wins[1], 100 * wins[1] / len(results)))
 print("Second player wins {} for {} %".format(wins[-1], 100 * wins[-1] / len(results)))
 print("Draws: {} for {}%".format(wins[0], 100 * wins[0] / len(results)))
