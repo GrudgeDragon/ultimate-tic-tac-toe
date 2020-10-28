@@ -2,14 +2,6 @@ import numpy as np
 import json
 
 """
-Terms
-t3:           tic-tac-toe
-ut3:          ultimate tic-tac-toe
-board:        3x3 grid. Can be meta or local.
-local_board:  3x3 t3 grid
-meta_board:   3x3 ut3 grid that describes the 9 local board win states
-global_board: 9x9 ut3 grid
-
 A Note about cat's games:
 
 Cat's games in UT3 are not the same as cat's games in T3. This is because players can place their mark on meta and local
@@ -208,6 +200,7 @@ def is_board_winnable(board, is_meta):
     # Could not find a row with both players in it, is still winnable.
     return False
 
+# Print the global board, with labeled rows and columns.
 def print_global_board(global_board):
     letter_board = [[num_to_char[player] for player in row] for row in global_board]
     print("  0 1 2  3 4 5  6 7 8")
@@ -223,6 +216,7 @@ def print_global_board(global_board):
             print("|" if col3 != 2 else "", end="")
         print()
 
+# Print a 3x3 board.
 def print_board(board):
     letter_board = [[num_to_char_meta[num] for num in row] for row in board]
     for row in range(3):
@@ -233,13 +227,15 @@ def print_board(board):
             print(" | " if col != 2 else "", end="")
         print()
 
-# Get json from log file, without processing
+# Get json from log file, without processing.
 def get_json_from_log(file_name):
     with open(file_name, 'r') as file:
         return json.load(file)
 
+
 def get_moves_from_json(json_data):
     return [(m[0], m[1])for m in json_data["moves"]]
+
 
 def get_data_from_log(file_name):
     json_data = get_json_from_log(file_name)

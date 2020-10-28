@@ -13,6 +13,7 @@ class UT3Game:
     # Print game to console, for quick human examination
     print_moves = False
 
+    # Save a record of the game
     log_games = True
 
     # By default, only moves are recorded to keep the logs small. We will want a large number of these logs and:
@@ -118,7 +119,6 @@ class UT3Game:
                 else self.agent1.player_name + "_" + self.agent2.player_name
             self.log_name = "logs\\{}_{}".format(log_prefix,
                                             self.time)
-                                            #int(round(self.game_time.microsecond * 1000)))
             with open(self.log_name, 'w') as outfile:
                 json.dump(self.game_data, outfile, indent=4 if self.pretty_logs else None)
 
