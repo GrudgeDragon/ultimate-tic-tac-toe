@@ -57,7 +57,7 @@ def get_global_winner(global_board):
     result = get_winner_meta_board(meta_board)
 
     # If no one's won the meta yet, check for cat's game
-    if result is None and not is_board_winnable(meta_board):
+    if result is None and not is_board_winnable(meta_board, is_meta=True):
         return 0
 
     return result
@@ -125,7 +125,7 @@ def is_board_full(board, unfinished_key):
 
     return True  # All tiles are filled, return draw
 
-def is_board_winnable(board):
+def is_board_winnable(board, is_meta):
     """
     After checking for win conditions, you can check if a board is a cats game. This function doesn't check for win
     conditions first. It will greedily look for the first row without both players in it, so a board with a win in it
@@ -148,50 +148,61 @@ def is_board_winnable(board):
     for row in range(3):
         player1_in_row = False
         player2_in_row = False
+        draw_in_row = False
         for col in range(3):
             if board[row, col] == 1:
                 player1_in_row = True
             elif board[row, col] == -1:
                 player2_in_row = True
-
+            elif board[row, col] == 0 and is_meta:
+                draw_in_row = True
         # Still winnable if we didn't see both players.
-        if not (player1_in_row and player2_in_row):
+        if not (player1_in_row and player2_in_row) and not draw_in_row:
             return True
 
     # Check columns
     for col in range(3):
         player1_in_col = False
         player2_in_col = False
+        draw_in_col = False
         for row in range(3):
             if board[row, col] == 1:
                 player1_in_col = True
             elif board[row, col] == -1:
                 player2_in_col = True
+            elif board[row, col] == 0 and is_meta:
+                draw_in_col = True
 
         # Still winnable if we didn't see both players.
-        if not (player1_in_col and player2_in_col):
+        if not (player1_in_col and player2_in_col) and not draw_in_col:
             return True
 
     # Check main diagonal
     player1_in_diagonal = False
     player2_in_diagonal = False
+    draw_in_diagonal = False
     for i in range(3):
         if board[i, i] == 1:
             player1_in_diagonal = True
         elif board[i, i] == -1:
             player2_in_diagonal = True
-    if not (player1_in_diagonal and player2_in_diagonal):
+        elif board[i, i] == 0 and is_meta:
+            draw_in_diagonal = True
+    if not (player1_in_diagonal and player2_in_diagonal) and not draw_in_diagonal:
         return True
 
     # Check second diagonal
     player1_in_diagonal = False
     player2_in_diagonal = False
+    draw_in_diagonal = False
     for i in range(3):
         if board[i, 2-i] == 1:
             player1_in_diagonal = True
         elif board[i, 2-i] == -1:
             player2_in_diagonal = True
-    if not (player1_in_diagonal and player2_in_diagonal):
+        elif board[i, 2-i] == 0 and is_meta:
+            draw_in_diagonal = True
+    if not (player1_in_diagonal and player2_in_diagonal) and not draw_in_diagonal:
         return True
 
     # Could not find a row with both players in it, is still winnable.
@@ -227,9 +238,12 @@ def get_json_from_log(file_name):
     with open(file_name, 'r') as file:
         return json.load(file)
 
+def get_moves_from_json(json_data):
+    return [(m[0], m[1])for m in json_data["moves"]]
+
 def get_data_from_log(file_name):
     json_data = get_json_from_log(file_name)
-    moves = [(m[0], m[1])for m in json_data["moves"]]
+    moves = get_moves_from_json(json_data)
     if "boards" in json_data:
         boards = [np.array(board) for board in json_data["boards"]]
         meta_boards = [np.array(board) for board in json_data["meta_boards"]]

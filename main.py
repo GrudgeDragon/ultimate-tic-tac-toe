@@ -1,9 +1,8 @@
-import numpy as np
 import matplotlib.pyplot as plt
-import random_agent
-import game
-from board_utils import *
 
+import game
+import random_agent
+from board_utils import *
 
 player1 = random_agent.RandomAgent("Bob")
 player2 = random_agent.RandomAgent("Alison")

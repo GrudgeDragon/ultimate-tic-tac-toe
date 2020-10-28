@@ -1,6 +1,8 @@
 import unittest
-import random_agent
+
 import numpy as np
+
+import random_agent
 
 
 class TestRandomAgent(unittest.TestCase):

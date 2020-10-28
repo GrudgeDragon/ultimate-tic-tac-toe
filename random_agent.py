@@ -1,6 +1,6 @@
 import random as rand
 from board_utils import *
-from game import UT3Agent
+from ut3agent import UT3Agent
 
 class RandomAgent(UT3Agent):
 

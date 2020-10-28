@@ -113,10 +113,10 @@ class TestBoardUtils(unittest.TestCase):
 
     def test_winnable_games(self):
         for board in unwinnable_boards:
-            self.assertFalse(board_utils.is_board_winnable(board), "This should be an unwinnable game")
+            self.assertFalse(board_utils.is_board_winnable(board, is_meta=False), "This should be an unwinnable game")
 
         for board in winnable_boards:
-            self.assertTrue(board_utils.is_board_winnable(board), "This should be a winnable game")
+            self.assertTrue(board_utils.is_board_winnable(board, is_meta=False), "This should be a winnable game")
 
 if __name__ == '__main__':
     unittest.main()
