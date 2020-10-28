@@ -16,10 +16,7 @@ class UT3Game:
     # Save a record of the game
     log_games = True
 
-    # By default, only moves are recorded to keep the logs small. We will want a large number of these logs and:
-    # - File IO takes a long time
-    # - We're keeping some of these in source control
-    # - We can always re-derive the boards from the moves TODO: Add helper for this to board_utils
+    # By default, only moves are recorded to keep the logs small.
     log_boards = False
 
     # Human-readable JSON
@@ -41,37 +38,38 @@ class UT3Game:
         self.meta_boards = []
         self.time = 0
         self.log_name = None
+        self.error = None
 
+    # Returns false when the game ends.
     def make_move(self, agent: UT3Agent):
-        # make move
+        """
+        Asks the agent to make a move, validates it, and updates the board, checks for win condition.
+        :param agent:
+        :return: Returns whether or not to continue the game.
+        """
         self.move_number += 1
         move = agent.make_move(self.global_board, self.next_local_board_index)
-        # validate
+
         if not self.validate_move(self.global_board, self.next_local_board_index, move):
-            # TODO: Handle bad moves
-            print("{} was an invalid move".format(move))
-            return False
+            self.end_game(None, None)
+            return False  # End game
 
-
-        # apply to board
         self.global_board[move] = agent.player_num
-        # check for win condition
-        winner = get_global_winner(self.global_board)
-
-        # Print to console
-        if self.print_moves:
-            self.print_move(move, agent)
 
         # Logging
+        if self.print_moves:
+            self.print_move(move, agent)
         self.move_list.append(move)
         if self.log_boards:
             self.global_boards.append(self.global_board)
             # TODO: Calculate meta_board only once
             self.meta_boards.append(get_meta_board(self.global_board))
 
+        # Check for win condition.
+        winner = get_global_winner(self.global_board)
         if winner is not None:
             self.end_game(winner, agent)
-            return False
+            return False  # End game
 
         # Determine next local board
         self.next_local_board_index = (move[0] % 3, move[1] % 3)
@@ -79,7 +77,7 @@ class UT3Game:
         if is_player(get_winner_local_board(next_local_board)) or is_board_full(next_local_board, 0):
             self.next_local_board_index = None
 
-        return True
+        return True  # Continue game.
 
     def play(self, agent1: UT3Agent, agent2: UT3Agent):
         self.__init__()  # Reset most things
@@ -108,8 +106,11 @@ class UT3Game:
                 print("The game was tied")
         if self.log_games:
             self.game_data["moves"] = self.move_list
-            self.game_data["winner"] = agent.player_num
-            self.game_data["winner_name"] = agent.player_name
+            if agent is not None:
+                self.game_data["winner"] = agent.player_num
+                self.game_data["winner_name"] = agent.player_name
+            if self.error is not None:
+                self.game_data["error"] = self.error
             if self.log_boards:
                 # Numpy arrays need to be converted to lists to be serialized in json
                 self.game_data["boards"] = [[[int(col) for col in row] for row in board] for board in self.global_boards]
@@ -132,13 +133,31 @@ class UT3Game:
         print()
         print()
 
-    # validate_move
-    # Checks that an agent placed a move in
-    #   move: is a tuple that corresponds to a position on the board.
+
+    # TODO: Move this to board utils
     def validate_move(self, global_board, next_local_board, move):
-        # TODO: Implement this.
-        # TODO: Verify with next_local_board.
-        # TODO: Verify didn't try to overwrite an existing move
-        # TODO: Verify didn't write to a local board that has a winner already
-        return move is not None
+        # Check they actually provided a move
+        if move is None:
+            self.error = "Invalid move on turn {}. Move was None".format(self.move_number)
+            return False
+
+        move_index = (move[0] // 3, move[1] // 3)
+
+        if next_local_board is not None:
+            if move_index != next_local_board:
+                self.error = "Invalid move on turn {}. Move {} was not in the local board {}" \
+                    .format(self.move_number, move, next_local_board)
+                return False
+
+        if global_board[move] != 0:
+            self.error = "Invalid move on turn {}. Move {} would overwrite an existing move" \
+                .format(self.move_number, move)
+            return False
+
+        if get_winner_local_board(get_local_board(global_board, move_index)) != None:
+            self.error = "Invalid move on turn {}. Move {} would write to a finished local board" \
+                .format(self.move_number, move)
+            return False
+
+        return True
 

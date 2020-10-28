@@ -3,14 +3,14 @@ import replay_agent
 import game
 
 class TestUT3Game(unittest.TestCase):
-    #TODO: Test next local board enforcement
-    #TODO: Test recovery from invalid moves
-    #TODO: Test detecting out of range moves
-    #TODO: Test detecting agent not respecting next local board
-    #TODO: Test moves should time out if they take too long
-    #TODO: Test logging game moves
-    #TODO: Test that tie games are culled early with replay file
-    pass
+    # TODO: Test next local board is enforced
+    # TODO: Test recovery from invalid moves
+    # TODO: Test detecting out of range moves
+    # TODO: Test moves should time out if they take too long
+    # TODO: Test logging game moves
+    # TODO: Verify didn't try to overwrite an existing move
+    # TODO: Verify didn't write to a local board that has a winner already
+
 
     def test_tie_ends_early(self):
         """

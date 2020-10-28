@@ -4,24 +4,7 @@ import game
 import random_agent
 from board_utils import *
 
-player1 = random_agent.RandomAgent("Bob")
-player2 = random_agent.RandomAgent("Alison")
-game = game.UT3Game()
-game.print_moves = True
-game.log_boards = True
-game.log_prefix = "random_agents"
-game.pretty_logs = True
-
-
-game.play(player1, player2)
-moves, boards, meta_boards = get_data_from_log(game.log_name)
-
-# print_global_board(boards[-1])
-# print_board(meta_boards[-1])
-exit()
-
-
-def run_test_games(num_games):
+def run_test_games(num_games, game):
     results = []
     for i in range(num_games):
         results.append(game.play(player1, player2))
@@ -33,6 +16,27 @@ def run_test_games(num_games):
     print("First player wins {} for {}%".format(wins[1], 100 * wins[1] / len(results)))
     print("Second player wins {} for {} %".format(wins[-1], 100 * wins[-1] / len(results)))
     print("Draws: {} for {}%".format(wins[0], 100 * wins[0] / len(results)))
+
+player1 = random_agent.RandomAgent("Bob")
+player2 = random_agent.RandomAgent("Alison")
+game = game.UT3Game()
+# game.log_games = False
+# game.print_moves = True
+# game.log_boards = True
+game.log_prefix = "random_agents"
+game.pretty_logs = True
+
+# run_test_games(100, game)
+
+# game.play(player1, player2)
+# moves, boards, meta_boards = get_data_from_log(game.log_name)
+
+# print_global_board(boards[-1])
+# print_board(meta_boards[-1])
+exit()
+
+
+
 
 
 
