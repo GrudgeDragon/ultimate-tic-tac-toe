@@ -46,6 +46,7 @@ class UT3Game:
         self.global_boards = []
         self.meta_boards = []
         self.time = 0
+        self.log_name = None
 
     def make_move(self, agent: UT3Agent):
         # make move
@@ -115,12 +116,17 @@ class UT3Game:
             self.game_data["moves"] = self.move_list
             self.game_data["winner"] = agent.player_num
             self.game_data["winner_name"] = agent.player_name
+            if self.log_boards:
+                # Numpy arrays need to be converted to lists to be serialized in json
+                self.game_data["boards"] = [[[int(col) for col in row] for row in board] for board in self.global_boards]
+                self.game_data["meta_boards"] = [[[int(col) if col is not None else None for col in row] for row in board] for board in self.meta_boards]
+
             log_prefix = self.log_prefix if self.log_prefix is not None \
                 else self.agent1.player_name + "_" + self.agent2.player_name
-            log_name = "logs\\{}_{}".format(log_prefix,
+            self.log_name = "logs\\{}_{}".format(log_prefix,
                                             self.time)
                                             #int(round(self.game_time.microsecond * 1000)))
-            with open(log_name, 'w') as outfile:
+            with open(self.log_name, 'w') as outfile:
                 json.dump(self.game_data, outfile, indent=4 if self.pretty_logs else None)
 
     def print_move(self, last_move, agent: UT3Agent):

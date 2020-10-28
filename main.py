@@ -1,32 +1,39 @@
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 import random_agent
 import game
+from board_utils import *
+
 
 player1 = random_agent.RandomAgent("Bob")
 player2 = random_agent.RandomAgent("Alison")
 game = game.UT3Game()
-# game.print_moves = True
+game.print_moves = True
 game.log_boards = True
 game.log_prefix = "random_agents"
-
-results = []
-for i in range(10):
-    results.append(game.play(player1, player2))
-
-wins = {-1: 0., 1: 0., 0: 0.}
-for r in results:
-    wins[r] += 1
-
-# print(results)
-print("First player wins {} for {}%".format(wins[1], 100 * wins[1] / len(results)))
-print("Second player wins {} for {} %".format(wins[-1], 100 * wins[-1] / len(results)))
-print("Draws: {} for {}%".format(wins[0], 100 * wins[0] / len(results)))
+game.pretty_logs = True
 
 
+game.play(player1, player2)
+moves, boards, meta_boards = get_data_from_log(game.log_name)
+
+# print_global_board(boards[-1])
+# print_board(meta_boards[-1])
 exit()
 
+
+def run_test_games(num_games):
+    results = []
+    for i in range(num_games):
+        results.append(game.play(player1, player2))
+
+    wins = {-1: 0., 1: 0., 0: 0.}
+    for r in results:
+        wins[r] += 1
+
+    print("First player wins {} for {}%".format(wins[1], 100 * wins[1] / len(results)))
+    print("Second player wins {} for {} %".format(wins[-1], 100 * wins[-1] / len(results)))
+    print("Draws: {} for {}%".format(wins[0], 100 * wins[0] / len(results)))
 
 
 

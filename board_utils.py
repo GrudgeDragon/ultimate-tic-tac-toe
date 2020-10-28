@@ -1,5 +1,5 @@
 import numpy as np
-
+import json
 
 """
 Terms
@@ -222,5 +222,26 @@ def print_board(board):
             print(" | " if col != 2 else "", end="")
         print()
 
+# Get json from log file, without processing
+def get_json_from_log(file_name):
+    with open(file_name, 'r') as file:
+        return json.load(file)
 
-
+def get_data_from_log(file_name):
+    json_data = get_json_from_log(file_name)
+    moves = [(m[0], m[1])for m in json_data["moves"]]
+    if "boards" in json_data:
+        boards = [np.array(board) for board in json_data["boards"]]
+        meta_boards = [np.array(board) for board in json_data["meta_boards"]]
+    else:
+        # Generate boards
+        global_board = np.zeros((9, 9), dtype=int)
+        boards = []
+        player = 1
+        meta_boards = []
+        for move in moves:
+            global_board[move] = player
+            player = -player
+            boards.append(global_board)
+            meta_boards.append(get_meta_board(global_board))
+    return moves, boards, meta_boards
