@@ -15,16 +15,50 @@ For the meta game, you don't have to wait for the meta to fill up, once there's 
 diagonal, the game can be declared a tie because it's un-winnable.
 
 """
-# For local boards
+# For local board tiles
 num_to_char = {1: 'X', -1: 'O', 0: ' '}
 
-# For meta boards
+# For meta board tiles
 num_to_char_meta = {1: 'X', -1: 'O', 0: '*', None: ' '}
+
+
+def empty_meta_board():
+    return np.empty((3, 3), dtype=object)
+
+
+def empty_global_board():
+    return np.zeros((9, 9))
+
+
+def empty_game():
+    return empty_meta_board(), empty_global_board()
+
+
+def make_meta_board(tile_list):
+    return np.array(tile_list, dtype=object)
+
+
+def make_global_board(tile_list):
+    return np.array(tile_list)
+
+
+def invert_players(board: np.ndarray):
+    inverted_board = np.empty_like(board)
+    for row in range(len(board)):
+        for col in range(len(board[row])):
+            tile = board[row, col]
+            if is_player(tile):
+                inverted_board[row, col] = -tile
+            else:
+                inverted_board[row, col] = tile
+    return inverted_board
+
 
 def get_local_board(global_board, board_index):
     row_start = board_index[0] * 3
     col_start = board_index[1] * 3
     return global_board[row_start:row_start + 3, col_start:col_start + 3]
+
 
 def get_meta_board(global_board):
     meta_board = np.array([[None for j in range(3)] for i in range(3)])
