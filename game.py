@@ -48,7 +48,7 @@ class UT3Game:
         :return: Returns whether or not to continue the game.
         """
         self.move_number += 1
-        move = agent.make_move(self.global_board, self.next_local_board_index)
+        move = agent.make_move(np.copy(self.global_board), self.next_local_board_index)
 
         if not self.validate_move(self.global_board, self.next_local_board_index, move):
             self.end_game(None, None)
