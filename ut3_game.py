@@ -91,7 +91,7 @@ class UT3Game:
         self.agent2.player_num = -1
         now = datetime.datetime.now()
         self.time = round(now.timestamp() * 1000)  # for log name
-        self.game_data["timestamp"] = str(now)  # for log data
+        self.game_data["start_timestamp"] = str(now)  # for log data
         self.game_data["players"] = (self.agent1.player_name, self.agent2.player_name)
 
     def play(self, agent1: UT3Agent, agent2: UT3Agent):
@@ -104,6 +104,8 @@ class UT3Game:
         return self.winner
 
     def end_game(self, winner, agent: UT3Agent):
+        now = datetime.datetime.now()
+        self.game_data["end_timestamp"] = str(now)  # for log data
         self.winner = winner
         if is_player(winner):
             if self.print_moves:
@@ -141,7 +143,6 @@ class UT3Game:
         print()
 
 
-    # TODO: Move this to board utils
     def validate_move(self, global_board, next_local_board, move):
         # Check they actually provided a move
         if move is None:
