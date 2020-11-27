@@ -1,6 +1,6 @@
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
-import game
+import ut3_game
 import random_agent
 from board_utils import *
 
@@ -19,16 +19,16 @@ def run_test_games(num_games, game):
 
 player1 = random_agent.RandomAgent("Bob")
 player2 = random_agent.RandomAgent("Alison")
-game = game.UT3Game()
+game = ut3_game.UT3Game()
 # game.log_games = False
-# game.print_moves = True
-# game.log_boards = True
+game.print_moves = True
+game.log_boards = False
 game.log_prefix = "random_agents"
 game.pretty_logs = True
 
 # run_test_games(100, game)
 
-# game.play(player1, player2)
+game.play(player1, player2)
 # moves, boards, meta_boards = get_data_from_log(game.log_name)
 
 # print_global_board(boards[-1])
@@ -59,30 +59,30 @@ def to_text(mat):
     return thing
 
 # create board
-board = np.array([[0, 1, 2, 3, 4, 5, 6, 7, 8],
-                   [0, 1, 2, 3, 4, 5, 6, 7, 8],
-                   [0, 1, 2, 3, 4, 5, 6, 7, 8],
-                   [1, 1, 2, 3, 4, 5, 6, 7, 8],
-                   [1, 1, 2, 3, 4, 5, 6, 7, 8],
-                   [1, 1, 2, 3, 4, 5, 6, 7, 8],
-                   [2, 1, 2, 3, 4, 5, 6, 7, 8],
-                   [2, 1, 2, 3, 4, 5, 6, 7, 8],
-                   [2, 1, 2, 3, 4, 5, 6, 7, 8]
-                  ], int)
-
-
-fig, axes = plt.subplots(nrows=3, ncols=3)
-
-for r in range(3):
-    for c in range(3):
-        ax = axes[r, c]
-        # hide axes
-        #fig.patch.set_visible(False)
-        ax.axis('off')
-        # ax.axis('tight')
-        d = board[r:r+3, c:c+3]
-        ax.table(cellText=to_text(d), loc='center')
-
-fig.tight_layout()
-
-plt.show()
+# board = np.array([[0, 1, 2, 3, 4, 5, 6, 7, 8],
+#                    [0, 1, 2, 3, 4, 5, 6, 7, 8],
+#                    [0, 1, 2, 3, 4, 5, 6, 7, 8],
+#                    [1, 1, 2, 3, 4, 5, 6, 7, 8],
+#                    [1, 1, 2, 3, 4, 5, 6, 7, 8],
+#                    [1, 1, 2, 3, 4, 5, 6, 7, 8],
+#                    [2, 1, 2, 3, 4, 5, 6, 7, 8],
+#                    [2, 1, 2, 3, 4, 5, 6, 7, 8],
+#                    [2, 1, 2, 3, 4, 5, 6, 7, 8]
+#                   ], int)
+#
+#
+# fig, axes = plt.subplots(nrows=3, ncols=3)
+#
+# for r in range(3):
+#     for c in range(3):
+#         ax = axes[r, c]
+#         # hide axes
+#         #fig.patch.set_visible(False)
+#         ax.axis('off')
+#         # ax.axis('tight')
+#         d = board[r:r+3, c:c+3]
+#         ax.table(cellText=to_text(d), loc='center')
+#
+# fig.tight_layout()
+#
+# plt.show()

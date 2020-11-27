@@ -39,6 +39,7 @@ class UT3Game:
         self.time = 0
         self.log_name = None
         self.error = None
+        self.last_move = None
 
     # Returns false when the game ends.
     def make_move(self, agent: UT3Agent):
@@ -64,6 +65,7 @@ class UT3Game:
             self.global_boards.append(self.global_board)
             # TODO: Calculate meta_board only once
             self.meta_boards.append(get_meta_board(self.global_board))
+        self.last_move = move
 
         # Check for win condition.
         winner = get_global_winner(self.global_board)
@@ -79,16 +81,21 @@ class UT3Game:
 
         return True  # Continue game.
 
-    def play(self, agent1: UT3Agent, agent2: UT3Agent):
+
+    def start(self, agent1: UT3Agent, agent2: UT3Agent):
         self.__init__()  # Reset most things
         self.agent1: UT3Agent = agent1
         self.agent2: UT3Agent = agent2
-        agent1.player_num = 1
-        agent2.player_num = -1
+
+        self.agent1.player_num = 1
+        self.agent2.player_num = -1
         now = datetime.datetime.now()
         self.time = round(now.timestamp() * 1000)  # for log name
         self.game_data["timestamp"] = str(now)  # for log data
-        self.game_data["players"] = (agent1.player_name, agent2.player_name)
+        self.game_data["players"] = (self.agent1.player_name, self.agent2.player_name)
+
+    def play(self, agent1: UT3Agent, agent2: UT3Agent):
+        self.start(agent1, agent2)
 
         # Game loop.
         while self.make_move(self.agent1) and self.make_move(self.agent2):

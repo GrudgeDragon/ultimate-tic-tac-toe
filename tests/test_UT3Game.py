@@ -1,6 +1,6 @@
 import unittest
 import replay_agent
-import game
+import ut3_game
 
 class TestUT3Game(unittest.TestCase):
     # TODO: Test next local board is enforced
@@ -18,7 +18,7 @@ class TestUT3Game(unittest.TestCase):
         :return:
         """
         agent1, agent2 = replay_agent.get_replay_agents_from_file("tie_game_that_shouldnt_last_62_moves")
-        test_game = game.UT3Game()
+        test_game = ut3_game.UT3Game()
         test_game.log_games = False
         result = test_game.play(agent1, agent2)
         self.assertEqual(result, 0, "The game should be a draw")

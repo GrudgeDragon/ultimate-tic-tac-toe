@@ -1,4 +1,4 @@
-import game
+import ut3_game
 from board_utils import *
 
 def get_replay_agents_from_file(file_name):
@@ -12,7 +12,7 @@ def get_replay_agents_from_file(file_name):
 
     return replay_agent(agent1_name, agent1_moves), replay_agent(agent2_name, agent2_moves)
 
-class replay_agent(game.UT3Agent):
+class replay_agent(ut3_game.UT3Agent):
 
     def __init__(self, name, moves):
         super().__init__(name)
