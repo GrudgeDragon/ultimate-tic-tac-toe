@@ -10,9 +10,9 @@ def get_replay_agents_from_file(file_name):
     agent1_name = "{}_from_{}".format(json_data["players"][0], file_name)
     agent2_name = "{}_from_{}".format(json_data["players"][1], file_name)
 
-    return replay_agent(agent1_name, agent1_moves), replay_agent(agent2_name, agent2_moves)
+    return ReplayAgent(agent1_name, agent1_moves), ReplayAgent(agent2_name, agent2_moves)
 
-class replay_agent(ut3_game.UT3Agent):
+class ReplayAgent(ut3_game.UT3Agent):
 
     def __init__(self, name, moves):
         super().__init__(name)

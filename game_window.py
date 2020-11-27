@@ -6,8 +6,7 @@ import math
 import ut3_game
 import random_agent
 import human_agent
-from datetime import datetime
-from datetime import timedelta
+import time
 
 
 X_COLOR = (255, 128, 128)
@@ -16,12 +15,12 @@ BLOCKED_COLOR = (32, 32, 32)
 BACK_COLOR = (64, 64, 64)
 LINE_COLOR = (128, 128, 128)
 CHOICE_COLOR = BLOCKED_COLOR
-DIRECTIVE_COLOR = pygame.Color(255, 255, 196, 8)
-LAST_MOVE_COLOR = pygame.Color(128, 255, 128, 8)
+DIRECTIVE_COLOR = (255, 255, 196)
+LAST_MOVE_COLOR = (0, 255, 0)
 FONT_COLOR = BLOCKED_COLOR
 
-# TURN_DELAY = 1.0
-TURN_DELAY = 0.25
+TURN_DELAY = 1.0
+
 
 LINE_WIDTH = 4
 SCREEN_WIDTH = 800
@@ -93,7 +92,7 @@ def draw_last_move_indicator(screen, pos, last_move):
                      pygame.Rect((pos[0] + INNER_PADDING /2 + last_move[1] * (TILE_SIZE),
                                   pos[1] + INNER_PADDING /2 + last_move[0] * (TILE_SIZE)),
                                  (TILE_SIZE - INNER_PADDING,
-                                  TILE_SIZE - INNER_PADDING)))
+                                  TILE_SIZE - INNER_PADDING)), width=2)
 
 def draw_directive(screen, pos, directive):
     if directive is None:
@@ -193,49 +192,49 @@ def start_window(game: ut3_game.UT3Game, agent1, agent2, aggro):
     is_human2 = isinstance(agent2, human_agent.HumanAgent)
 
     player1_text = gameFont.render(agent1.player_name, True, X_COLOR)
-    player2_text = gameFont.render(agent2.player_name, True, X_COLOR)
+    player2_text = gameFont.render(agent2.player_name, True, O_COLOR)
     game.start(agent1, agent2)
 
     screen.fill(pygame.Color(0, 0, 0))
     game_not_over = True
-    last_turn = datetime.now() - timedelta(seconds=TURN_DELAY)
+    last_turn = time.time() - TURN_DELAY
     global_board = game.global_board
     directive = None
 
     while True:
         screen.fill(BACK_COLOR)
         mouse_up = False
-        choice_inidcator = None
+        choice_inidcator_pos = None
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONUP:
                 mouse_up = True
         if game_not_over:
-            if (datetime.now() - last_turn).microseconds / 1000000 > TURN_DELAY:
+            seconds_since_last_move = time.time() - last_turn
+            if seconds_since_last_move > TURN_DELAY:
                 agent = agent1 if first_player_turn else agent2
                 is_human = is_human1 if first_player_turn else is_human2
                 if not is_human:
                     game_not_over = game.make_move(agent)
                     first_player_turn = not first_player_turn
                     if not (is_human1 or is_human2):
-                        last_turn = datetime.now()
+                        last_turn = time.time()
                 else:
                     choice, choice_pos, meta_choice = get_input(screen)
                     if choice is not None and \
                             not bu.is_player(global_board[choice]) \
                             and (directive is None or meta_choice == directive):
-                        choice_inidcator = choice_pos
+                        choice_inidcator_pos = choice_pos
                         if mouse_up:
                             agent.next_move = choice
                             game_not_over = game.make_move(agent)
                             first_player_turn = not first_player_turn
-                            last_turn = datetime.now()
+                            last_turn = time.time()
 
             screen.blit(current_player_text, (50, 50))
             screen.blit(player1_text if first_player_turn else player2_text, (50, 100))
         else:
-            # print(aggro)
             if bu.is_player(game.winner):
                 screen.blit(win_text, (50, 50))
                 screen.blit(player1_text if game.winner == 1 else player2_text, (50, 100))
@@ -251,15 +250,23 @@ def start_window(game: ut3_game.UT3Game, agent1, agent2, aggro):
 
         draw_global_board(screen, global_board, directive, last_move)
         draw_meta_board(screen, bu.get_meta_board(global_board))
-        if choice_inidcator is not None:
-            pygame.draw.circle(screen, CHOICE_COLOR, choice_inidcator, TILE_SIZE / 2)
+        if choice_inidcator_pos is not None:
+            pygame.draw.circle(screen, CHOICE_COLOR, choice_inidcator_pos, TILE_SIZE / 2)
+            if first_player_turn:
+                draw_x(screen, (choice_inidcator_pos[0] - TILE_SIZE/2, choice_inidcator_pos[1]-TILE_SIZE/2))
+            else:
+                draw_o(screen, (choice_inidcator_pos[0] - TILE_SIZE/2, choice_inidcator_pos[1]-TILE_SIZE/2))
+
 
         pygame.display.flip()
 
 if __name__ == '__main__':
     game = ut3_game.UT3Game()
-    rand_agent = random_agent.RandomAgent("Random agent 1")
-    rand_agent2 = random_agent.RandomAgent("Random agent 2")
+    # rand_agent = random_agent.RandomAgent("Random agent 1")
+    # rand_agent2 = random_agent.RandomAgent("Random agent 2")
+    # start_window(game, rand_agent, rand_agent2, 0.5)
+
     human = human_agent.HumanAgent("Human agent1")
     human2 = human_agent.HumanAgent("Human agent2")
-    start_window(game, rand_agent, rand_agent2, 0.5)
+    start_window(game, human, human2, 0.5)
+
