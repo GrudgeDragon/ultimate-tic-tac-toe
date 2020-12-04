@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/UltimateTicTacToe.iml" filepath="$PROJECT_DIR$/.idea/UltimateTicTacToe.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../UltimateTicTacToe-Agent/.idea/agent-deep-q.iml" filepath="$PROJECT_DIR$/../UltimateTicTacToe-Agent/.idea/agent-deep-q.iml" />
     </modules>
   </component>
 </project>
