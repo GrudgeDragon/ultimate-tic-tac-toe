@@ -29,7 +29,7 @@ class UT3Game:
         self.agent1 = None
         self.agent2 = None
         self.global_board = np.zeros((9, 9), dtype=int)
-        self.next_local_board_index = None
+        self.directive = None
         self.move_number = 0
         self.winner = None
         self.move_list = []
@@ -49,9 +49,9 @@ class UT3Game:
         :return: Returns whether or not to continue the game.
         """
         self.move_number += 1
-        move = agent.make_move(np.copy(self.global_board), self.next_local_board_index)
+        move = agent.make_move(np.copy(self.global_board), self.directive)
 
-        if not self.validate_move(self.global_board, self.next_local_board_index, move):
+        if not self.validate_move(self.global_board, self.directive, move):
             self.end_game(None, None)
             return False  # End game
 
@@ -74,10 +74,10 @@ class UT3Game:
             return False  # End game
 
         # Determine next local board
-        self.next_local_board_index = (move[0] % 3, move[1] % 3)
-        next_local_board = get_local_board(self.global_board, self.next_local_board_index)
+        self.directive = (move[0] % 3, move[1] % 3)
+        next_local_board = get_local_board(self.global_board, self.directive)
         if is_player(get_winner_local_board(next_local_board)) or is_board_full(next_local_board, 0):
-            self.next_local_board_index = None
+            self.directive = None
 
         return True  # Continue game.
 
@@ -134,6 +134,7 @@ class UT3Game:
 
     def print_move(self, last_move, agent: UT3Agent):
         print("Move", self.move_number)
+        print(agent.player_name)
         print("{} to {}".format(num_to_char[agent.player_num], last_move))
         print("Board:")
         print_global_board(self.global_board)

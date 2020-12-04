@@ -11,16 +11,16 @@ class RandomAgent(UT3Agent):
     # The agent makes a move
     #   board: is 9x9 board state
     #   local_board: if not null, a tuple representing the sub_board that must be used ([0-2],[0-2])
-    def make_move(self, global_board, local_board_index):
+    def make_move(self, global_board, directive):
 
         # if local_board is given
-        if local_board_index is not None:
+        if directive is not None:
             # Validate it
-            if local_board_index[0] < 0 or local_board_index[0] > 2 or local_board_index[1] < 0 or local_board_index[1] > 2:
+            if directive[0] < 0 or directive[0] > 2 or directive[1] < 0 or directive[1] > 2:
                 print("Bad local_board_index")
                 return None
-            row_start = local_board_index[0] * 3
-            col_start = local_board_index[1] * 3
+            row_start = directive[0] * 3
+            col_start = directive[1] * 3
             # TODO: If the forced board is completed, skip. This probably shouldn't happen though
             return self.random_local_board_move(global_board, row_start, col_start)
 
@@ -30,12 +30,12 @@ class RandomAgent(UT3Agent):
 
         # Try each local_board until a valid move is found
         for i in range(9):
-            local_board_index = local_board_index_list[i]
-            row_start = local_board_index[0] * 3
-            col_start = local_board_index[1] * 3
+            directive = local_board_index_list[i]
+            row_start = directive[0] * 3
+            col_start = directive[1] * 3
 
             # If this board has a win condition, don't try to make a move
-            if not is_player(get_winner_local_board(get_local_board(global_board, local_board_index))):
+            if not is_player(get_winner_local_board(get_local_board(global_board, directive))):
                 move = self.random_local_board_move(global_board, row_start, col_start)
                 if move is not None:
                     return move

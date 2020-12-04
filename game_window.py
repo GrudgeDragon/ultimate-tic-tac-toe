@@ -245,7 +245,7 @@ def start_window(game: ut3_game.UT3Game, agent1, agent2, aggro):
 
 
         global_board = game.global_board
-        directive = game.next_local_board_index
+        directive = game.directive
         last_move = game.last_move
 
         draw_global_board(screen, global_board, directive, last_move)

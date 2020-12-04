@@ -308,3 +308,9 @@ def get_win_streak(board):
 
     return None
 
+def is_move_in_directive(move, directive):
+    local_index = get_local_index_from_move(move)
+    return local_index == directive
+
+def get_local_index_from_move(move):
+    return (move[0] // 3, move[1] // 3)
